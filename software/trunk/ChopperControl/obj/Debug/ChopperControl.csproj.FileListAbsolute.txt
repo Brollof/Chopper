@@ -1,0 +1,10 @@
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\bin\Debug\ChopperControl.exe.config
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\bin\Debug\ChopperControl.exe
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\bin\Debug\ChopperControl.pdb
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.Form1.resources
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.ParametryUart.resources
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.Properties.Resources.resources
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.csproj.GenerateResource.Cache
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.exe
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.pdb
+c:\Users\Olaf\Desktop\studia\sem III\mgr\Chopper___001\software\trunk\ChopperControl\obj\Debug\ChopperControl.csprojResolveAssemblyReference.cache
