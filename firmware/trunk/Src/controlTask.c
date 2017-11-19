@@ -8,39 +8,30 @@
 #include "uartTask.h"
 #include <stdbool.h>
 
-/////////////////////////////////////////////////////
-// 1. -----sprawdzic nowy PID_NEW
-// 2. sprawdzic PID na podstawie wartosci chwilowej pradu (wywalic srednia)
-// 3. sprawdzic PID z wyliczaniem czlonu integral bez czasu dt
-// 4. ADC+DMA w trybie ciągłym
-
-////////////// PYTANIA //////////////
-// 1. jaki okres probkowania ?
-// 2. wartosc srednia ?
-// 3. dt w PI ?
-// 4. prad czy wartosc adc ?
-
-/* Macros and defines */
+/* Makra i definicje */
 #define dt 0.0001 // 100 us
-#define EPSILON 0.01
 #define ADC_REF 3000ULL
 #define MAX_12_BIT 4096ULL
-#define MAX_CURRENT 15000 //mA
 
-/* --- Global variables declaration --- */
-volatile uint32_t adcResult = 0;         //ADC DMA buffer
+// Maksymalne wartości dla 3 V na pinie analogowym
+// ADC: 4095 -> 3V -> 30 A
+#define MAX_CURRENT 30000 //mA
+#define MAX_SPEED 1400 //obr/min
+
+/* --- Zmienne globalne --- */
+uint32_t adcResult[2] = {0};         //ADC DMA buffer, 0 - current, 1 - speed
 bool newMotorState = false;
 
-/* --- External variables --- */
+/* --- Zmienne globalne --- */
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim4;
 
-/* --- Static functions --- */
+/* --- Funkcje statyczne --- */
 static void motorControl(void);
 static void stopMotor(void);
 static void startMotor(void);
 
-/* --- Define motor object --- */
+/* --- Definicja obiektu silnika --- */
 motorObject_t motor =
 {
   .frequency = 0,
@@ -62,13 +53,13 @@ int16_t currPos = 0;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-  adcBuffer[currPos++] = adcResult;
+  adcBuffer[currPos++] = adcResult[0];
   currPos = currPos % ADC_BUFFER_SIZE;
 }
 
 void startADC(void)
 {
-  HAL_ADC_Start_DMA(&hadc1, &adcResult, 1);
+  HAL_ADC_Start_DMA(&hadc1, adcResult, 2);
 }
 
 void stopADC(void)
@@ -76,16 +67,10 @@ void stopADC(void)
   HAL_ADC_Stop_DMA(&hadc1);
 }
 
-void getMotorLimits(currentType_t *current, speedType_t *speed)
-{
-  *current = motor.currentLimit;
-  *speed = motor.speedLimit;
-}
-
-static float getMotorCurrent(void)
+static float getMotorCurrentRaw(void)
 {
   uint32_t current = 0;
-  uint32_t adcCpy = adcResult;
+  uint32_t adcCpy = adcResult[0];
   current = (uint32_t)((MAX_CURRENT * adcCpy) / MAX_12_BIT);
   return ((float)current) / 1000;
 }
@@ -104,6 +89,14 @@ float getMotorAverageCurrent(void)
   return ((float)current) / 1000;
 }
 
+speedType_t getMotorSpeed(void)
+{
+  speedType_t speedRaw = 0;
+  uint32_t adcCpy = adcResult[1];
+  speedRaw = (uint32_t)((MAX_SPEED * adcCpy) / MAX_12_BIT);
+  return speedRaw;
+}
+
 static float limitVar(float var, float limit) // returns value in range <0:limit>
 {
   if (var > limit)
@@ -115,63 +108,52 @@ static float limitVar(float var, float limit) // returns value in range <0:limit
 }
 
 #define ABS(x)  (((x) < 0) ? -(x) : (x))
-#define TH_VAL 2
-#define INT_THRESHOLD_MAX TH_VAL
-#define INT_THRESHOLD_MIN -TH_VAL
+#define TH_VAL_CURR 1
+#define INT_THRESHOLD_MAX_CURR TH_VAL_CURR
+#define INT_THRESHOLD_MIN_CURR -TH_VAL_CURR
 
 static float integral_PI = 0;
-static float PI(float Kp, float Ki, float varRef, float var, float limit)
-{
-  float error, out;
-
-  error = varRef - var;
-  // integral_PI += error * dt;
-  integral_PI += error;
-
-  // windup #1 - wylaczenie integratora
-  // if (integral_PI > INT_THRESHOLD_MAX || integral_PI < INT_THRESHOLD_MIN)
-  //   integral_PI = 0;
-
-  // windup #2 - ograniczenie wartosci integratora
-  if (integral_PI > INT_THRESHOLD_MAX)
-    integral_PI = INT_THRESHOLD_MAX;
-  else if (integral_PI < INT_THRESHOLD_MIN)
-    integral_PI = INT_THRESHOLD_MIN;
-
-  out = Kp * error + Ki * integral_PI;
-
-  return limitVar(out, limit); // ograniczenie regulatora
-}
-
-static float PI_NEW(float Kp, float Ti, float varRef, float var, float limit)
+static float PI(float Kp, float Ti, float varRef, float var, float limit)
 {
   float error, out;
 
   error = varRef - var;
   integral_PI += Kp * error / Ti;
 
+  if (integral_PI > INT_THRESHOLD_MAX_CURR)
+    integral_PI = INT_THRESHOLD_MAX_CURR;
+  else if (integral_PI < INT_THRESHOLD_MIN_CURR)
+    integral_PI = INT_THRESHOLD_MIN_CURR;
+
   out = Kp * error + integral_PI;
 
   return limitVar(out, limit);
 }
 
+#define TH_VAL_SPEED 30
+#define INT_THRESHOLD_MAX_SPEED TH_VAL_SPEED
+#define INT_THRESHOLD_MIN_SPEED -TH_VAL_SPEED
+
 static float errorPrev_PID = 0, integral_PID = 0;
-static float PID(float Kp, float Ki, float Kd, float varRef, float var, float limit)
+static float PID(float Kp, float Ti, float Td, float varRef, float var, float limit)
 {
-  float error, derivative, out;
+  float error, out, derivative;
 
   error = varRef - var;
-  // if (abs(error) > EPSILON)
-  integral_PID += error * dt;
-
-  derivative = (error - errorPrev_PID) / dt;
-  out = Kp * error + Ki * integral_PID + Kd * derivative;
+  integral_PID += Kp * error / Ti;
+  derivative = Kp * Td * (error - errorPrev_PID) / dt;
   errorPrev_PID = error;
+
+  if (integral_PID > INT_THRESHOLD_MAX_SPEED)
+    integral_PID = INT_THRESHOLD_MAX_SPEED;
+  else if (integral_PID < INT_THRESHOLD_MIN_SPEED)
+    integral_PID = INT_THRESHOLD_MIN_SPEED;
+
+  out = Kp * error + integral_PID + derivative;
 
   return limitVar(out, limit);
 }
 
-/* Called from ADC Conv. Compl. Interrupt */
 static void motorControl(void)
 {
   static float gamma = 0;
@@ -182,15 +164,16 @@ static void motorControl(void)
       break;
 
     case SPEED_CONTROL:
-      // iRef = PID(Kp_omega, Ki_omega, Kd_omega, omegaRef, omega, 1); //limit 1 w jw
-      // i = getMotorCurrent();
-      // gamma = PID(Kp_i, Ki_i, Kd_i, iRef, i, 1);
-      // setDutyCycle(gamma);
+      motor.speed = getMotorSpeed();
+      motor.currentPID.ref = PID(motor.speedPID.kp, motor.speedPID.ki, motor.speedPID.kd, motor.speedPID.ref, motor.speed, motor.currentLimit);
+      motor.current = getMotorCurrentRaw();
+      gamma = PI(motor.currentPID.kp, motor.currentPID.ki, motor.currentPID.ref, motor.current, 1);
+      setDutyCycle(gamma);
       break;
 
     case TORQUE_CONTROL:
-      motor.current = getMotorCurrent();
-      gamma = PI(motor.currentPID.kp, motor.currentPID.ki, motor.currentPID.ref, motor.current, 0.9);
+      motor.current = getMotorCurrentRaw();
+      gamma = PI(motor.currentPID.kp, motor.currentPID.ki, motor.currentPID.ref, motor.current, 1);
       setDutyCycle(gamma);
       break;
 
@@ -199,7 +182,7 @@ static void motorControl(void)
     }
 }
 
-// Control interrupt
+// Motor control interrupt
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM4) // 100 us
@@ -235,7 +218,7 @@ static void startMotor(void)
   xprintf("Silnik START...\n");
   RED_LED_ON();
   setSwitchingFrequency(motor.frequency);
-  setDutyCycle(0.5);
+  setDutyCycle(motor.dutyCycle);
   startADC();
   startPWM();
 
@@ -265,11 +248,9 @@ void motorCheck(void)
       xprintf("***************************************\n");
       xprintf("Odebrane dane:\n");
       xprintf("Prad zadany: %d A\n", (uint16_t)(motor.currentPID.ref));
-      xprintf("Kp: %s\n", fts(motor.currentPID.kp));
-      xprintf("Ki: %s\n", fts(motor.currentPID.ki));
+      xprintf("Kp: %s\n", fts04(motor.currentPID.kp));
+      xprintf("Ki: %s\n", fts04(motor.currentPID.ki));
       xprintf("Czestotliwosc modulacji: %d Hz\n", motor.frequency);
-      xprintf("Ograniczenie pradu: %d\n", (uint16_t)(motor.currentLimit));
-      xprintf("Ograniczenie predkosci: %d\n", motor.speedLimit);
       xprintf("Regulacja momentu\n");
       motor.start();
       break;
@@ -278,14 +259,13 @@ void motorCheck(void)
       xprintf("***************************************\n");
       xprintf("Odebrane dane:\n");
       xprintf("Predkosc zadana: %d obr/min\n", (uint16_t)(motor.speedPID.ref));
-      xprintf("Kp pradu: %s\n", fts(motor.currentPID.kp));
-      xprintf("Ki pradu: %s\n", fts(motor.currentPID.ki));
-      xprintf("Kp predkosci: %s\n", fts(motor.speedPID.kp));
-      xprintf("Ki predkosci: %s\n", fts(motor.speedPID.ki));
-      xprintf("Kd predkosci: %s\n", fts(motor.speedPID.kd));
+      xprintf("Kp pradu: %s\n", fts04(motor.currentPID.kp));
+      xprintf("Ki pradu: %s\n", fts04(motor.currentPID.ki));
+      xprintf("Kp predkosci: %s\n", fts04(motor.speedPID.kp));
+      xprintf("Ki predkosci: %s\n", fts04(motor.speedPID.ki));
+      xprintf("Kd predkosci: %s\n", fts04(motor.speedPID.kd));
       xprintf("Czestotliwosc modulacji: %d Hz\n", motor.frequency);
-      xprintf("Ograniczenie pradu: %d\n", (uint16_t)(motor.currentLimit));
-      xprintf("Ograniczenie predkosci: %d\n", motor.speedLimit);
+      xprintf("Ograniczenie pradu: %d A\n", (uint16_t)(motor.currentLimit));
       xprintf("Regulacja predkosci\n");
       motor.start();
       break;
@@ -294,6 +274,7 @@ void motorCheck(void)
       xprintf("***************************************\n");
       xprintf("Odebrane dane:\n");
       xprintf("Czestotliwosc modulacji: %d Hz\n", motor.frequency);
+      xprintf("Wspolczynnik wypelnienia: %d %%\n", (uint32_t)(motor.dutyCycle * 100));
       xprintf("Sterowanie PWM\n");
       motor.start();
       break;

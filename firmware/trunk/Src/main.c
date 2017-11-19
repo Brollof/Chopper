@@ -27,7 +27,7 @@ typedef struct
 
 static void changeLedState(void)
 {
-  HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
+  GREEN_LED_TOGGLE();
 }
 
 periodEvents_t periodEvents[eventsNum] =

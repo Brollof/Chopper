@@ -34,7 +34,7 @@
 #define ID_TEXT_CURRENT_REF (GUI_ID_USER + 0x18)
 #define ID_CURRENT_MEAS_TXT (GUI_ID_USER + 0x19)
 #define ID_CURRENT_MEAS (GUI_ID_USER + 0x1A)
-#define ID_DROPDOWN_0 (GUI_ID_USER + 0x11)
+#define ID_DROPDOWN_FREQ (GUI_ID_USER + 0x11)
 #define ID_TEXT_ERROR1 (GUI_ID_USER + 0x13)
 #define ID_TEXT_ERROR2 (GUI_ID_USER + 0x15)
 
@@ -60,24 +60,15 @@
 #define ID_EDIT_KI_SPEED (GUI_ID_USER + 0x2F)
 #define ID_EDIT_KD_SPEED (GUI_ID_USER + 0x30)
 
-/* Motor parameters window controls */
-#define ID_BUTTON_20 (GUI_ID_USER + 0x31)
-#define ID_BUTTON_21 (GUI_ID_USER + 0x32)
-#define ID_BUTTON_22 (GUI_ID_USER + 0x33)
-#define ID_BUTTON_23 (GUI_ID_USER + 0x34)
-#define ID_BUTTON_24 (GUI_ID_USER + 0x35)
-#define ID_BUTTON_25 (GUI_ID_USER + 0x36)
-#define ID_BUTTON_26 (GUI_ID_USER + 0x37)
-#define ID_BUTTON_27 (GUI_ID_USER + 0x38)
-#define ID_BUTTON_28 (GUI_ID_USER + 0x39)
-#define ID_BUTTON_29 (GUI_ID_USER + 0x3A)
-#define ID_BUTTON_DOT_PARAM (GUI_ID_USER + 0x3B)
-#define ID_BUTTON_BACKSPACE_PARAM (GUI_ID_USER + 0x3C)
-#define ID_CLEAR_ALL_PARAM (GUI_ID_USER + 0x3D)
 #define ID_TEXT_CURRENT_LIMIT (GUI_ID_USER + 0x3E)
-#define ID_TEXT_SPEED_LIMIT (GUI_ID_USER + 0x3F)
 #define ID_EDIT_CURRENT_LIMIT (GUI_ID_USER + 0x40)
-#define ID_EDIT_SPEED_LIMIT (GUI_ID_USER + 0x41)
+
+/* Main window */
+#define ID_DROPDOWN_DUTY_CYCLE (GUI_ID_USER + 0x41)
+#define ID_TEXT_FREQ (GUI_ID_USER + 0x42)
+#define ID_TEXT_DUTY_CYCLE (GUI_ID_USER + 0x43)
+#define ID_SPEED_MEAS_TXT (GUI_ID_USER + 0x44)
+#define ID_SPEED_MEAS (GUI_ID_USER + 0x45)
 
 #define MAX_EDIT_FIELD_LENGTH 6
 
@@ -106,7 +97,7 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate_CurrentReg[] =
   { BUTTON_CreateIndirect, "Usun", ID_BUTTON_BACKSPACE_CURRENT, 177, ROW_1_HEIGHT, 55, 40, 0, 0x0, 0 },
   { BUTTON_CreateIndirect, ".", ID_BUTTON_DOT_CURRENT, 177, ROW_0_HEIGHT, 55, 40, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Kp", ID_TEXT_KP_CURRENT, 15, 5, 31, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Ki", ID_TEXT_KI_CURRENT, 70, 5, 23, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Ti", ID_TEXT_KI_CURRENT, 70, 5, 23, 20, 0, 0x0, 0 },
   { EDIT_CreateIndirect, "kpEditCurrent", ID_EDIT_KP_CURRENT, 15, 20, 45, 20, 0, 0x64, 0 },
   { EDIT_CreateIndirect, "kiEditCurrent", ID_EDIT_KI_CURRENT, 70, 20, 45, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Prad zadany [A]:", ID_TEXT_CURRENT_REF, 15, 45, 90, 20, 0, 0x0, 0 },
@@ -130,51 +121,37 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate_SpeedReg[] =
   { BUTTON_CreateIndirect, "Usun", ID_BUTTON_BACKSPACE_SPEED, 177, ROW_1_HEIGHT, 55, 40, 0, 0x0, 0 },
   { BUTTON_CreateIndirect, ".", ID_BUTTON_DOT_SPEED, 177, ROW_0_HEIGHT, 55, 40, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Kp", ID_TEXT_KP_SPEED, 15, 5, 25, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Ki", ID_TEXT_KI_SPEED, 70, 5, 25, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Kd", ID_TEXT_KD_SPEED, 70 + 55, 5, 25, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Ti", ID_TEXT_KI_SPEED, 70, 5, 25, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Td", ID_TEXT_KD_SPEED, 70 + 55, 5, 25, 20, 0, 0x0, 0 },
   { EDIT_CreateIndirect, "kpEditSpeed", ID_EDIT_KP_SPEED, 15, 20, 45, 20, 0, 0x64, 0 },
   { EDIT_CreateIndirect, "kiEditSpeed", ID_EDIT_KI_SPEED, 70, 20, 45, 20, 0, 0x64, 0 },
   { EDIT_CreateIndirect, "kdEditSpeed", ID_EDIT_KD_SPEED, 70 + 55, 20, 45, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Predkosc zadana [obr/min]:", ID_TEXT_SPEED_REF, 15, 45, 150, 20, 0, 0x0, 0 },
   { EDIT_CreateIndirect, "speedRefEdit", ID_SPEED_REF_EDIT, 15, 60, 80, 20, 0, 0x64, 0 },
-};
-
-static const GUI_WIDGET_CREATE_INFO _aDialogCreate_Limits[] =
-{
-  { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 240, 320, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "7", ID_BUTTON_27, 4, ROW_3_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "8", ID_BUTTON_28, 62, ROW_3_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "9", ID_BUTTON_29, 119, ROW_3_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "ClrAll", ID_CLEAR_ALL_PARAM, 177, ROW_3_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "4", ID_BUTTON_24, 4, ROW_2_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "5", ID_BUTTON_25, 62, ROW_2_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "6", ID_BUTTON_26, 119, ROW_2_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "0", ID_BUTTON_20, 177, ROW_2_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "1", ID_BUTTON_21, 4, ROW_1_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "2", ID_BUTTON_22, 62, ROW_1_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "3", ID_BUTTON_23, 119, ROW_1_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "Usun", ID_BUTTON_BACKSPACE_PARAM, 177, ROW_1_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, ".", ID_BUTTON_DOT_PARAM, 177, ROW_0_HEIGHT, 55, 40, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Prad twornika [A]:", ID_TEXT_CURRENT_LIMIT, 15, 5, 150, 20, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "currentLimitEdit", ID_EDIT_CURRENT_LIMIT, 15, 20, 60, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Predkosc katowa [obr/min]:", ID_TEXT_SPEED_LIMIT, 15, 45, 160, 20, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "speedLimitEdit", ID_EDIT_SPEED_LIMIT, 15, 60, 60, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Ograniczenie pradu [A]:", ID_TEXT_CURRENT_LIMIT, 15, 85, 150, 20, 0, 0x0, 0 },
+  { EDIT_CreateIndirect, "currentLimitEdit", ID_EDIT_CURRENT_LIMIT, 15, 100, 60, 20, 0, 0x64, 0 },
 };
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate_Control[] =
 {
   { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 240, 320, 0, 0x0, 0 },
-  { RADIO_CreateIndirect, "Radio", GUI_ID_RADIO0, 6, 9, 181, 60, 0, 0x1e02, 0 },
+  { RADIO_CreateIndirect, "Radio", GUI_ID_RADIO0, 6, 9, 181, 90, 0, 0x1e03, 0 },
   { BUTTON_CreateIndirect, "START", GUI_ID_BUTTON0, 140, 10, 83, 33, 0, 0x0, 0 },
   { BUTTON_CreateIndirect, "STOP", GUI_ID_BUTTON1, 140, 60, 83, 33, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Pomiar pradu [A]:", ID_CURRENT_MEAS_TXT, 135, 115, 100, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "0.00", ID_CURRENT_MEAS, 135, 132, 80, 20, 0, 0x0, 0 },
-  { DROPDOWN_CreateIndirect, "Dropdown", ID_DROPDOWN_0, 10, 80, 90, 18, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "", ID_TEXT_ERROR1, 10, 160, 200, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "", ID_TEXT_ERROR2, 10, 180, 220, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Czestotliwosc [Hz]:", ID_TEXT_FREQ, 10, 100, 150, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Wypelnienie [%]:", ID_TEXT_DUTY_CYCLE, 125, 100, 150, 20, 0, 0x0, 0 },
+  { DROPDOWN_CreateIndirect, "dropdownFreq", ID_DROPDOWN_FREQ, 10, 115, 100, 18, 0, 0x0, 0 },
+  { DROPDOWN_CreateIndirect, "dropdownDutyCycle", ID_DROPDOWN_DUTY_CYCLE, 125, 115, 100, 18, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Prad [A]:", ID_CURRENT_MEAS_TXT, 10, 155, 100, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "0.00", ID_CURRENT_MEAS, 10, 170, 80, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Predkosc [obr/min]:", ID_SPEED_MEAS_TXT, 125, 155, 100, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "0", ID_SPEED_MEAS, 125, 170, 80, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "", ID_TEXT_ERROR1, 10, 210, 200, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "", ID_TEXT_ERROR2, 10, 230, 220, 20, 0, 0x0, 0 },
+
 };
 
-#define PAGES_NUM 4
+#define PAGES_NUM 3
 /*********************************************************************
 *
 *       Static code
@@ -191,7 +168,6 @@ typedef enum
   EDIT_CURRENT_REF,
   EDIT_SPEED_REF,
   EDIT_CURRENT_LIMIT,
-  EDIT_SPEED_LIMIT,
   EDIT_ERROR1,
   EDIT_ERROR2,
   editFieldsNum,
@@ -203,9 +179,9 @@ WM_HWIN hRadio;
 WM_HWIN hDialogControl;
 WM_HWIN hDialogCurrentReg;
 WM_HWIN hDialogSpeedReg;
-WM_HWIN hDialogParams;
 WM_HWIN hMultiPage;
-WM_HWIN hDropDown;
+WM_HWIN hDropDownFreq;
+WM_HWIN hDropDownDutyCycle;
 
 editField_t activeEditField = EDIT_KP_CURRENT;
 char currentlyEditedField[10] = "";
@@ -216,7 +192,7 @@ static uint8_t radioButtonSelectIndex = 0;
 #define ENABLE_STOP_BTN(arg) WM_EnableWindow(hStopButton)
 #define DISABLE_STOP_BTN(arg) WM_DisableWindow(hStopButton)
 
-static void onStartClick(WM_MESSAGE *pMsg, WM_HWIN hDropDown);
+static void onStartClick(WM_MESSAGE *pMsg);
 static inline void enableAllPages(void);
 
 static const char buttonsCurrent[ID_BUTTON_9 + 1][2] =
@@ -247,24 +223,11 @@ static const char buttonsSpeed[ID_BUTTON_19 + 1][2] =
   [ID_BUTTON_19] = "9",
 };
 
-static const char buttonsParam[ID_BUTTON_29 + 1][2] =
-{
-  [ID_BUTTON_20] = "0",
-  [ID_BUTTON_21] = "1",
-  [ID_BUTTON_22] = "2",
-  [ID_BUTTON_23] = "3",
-  [ID_BUTTON_24] = "4",
-  [ID_BUTTON_25] = "5",
-  [ID_BUTTON_26] = "6",
-  [ID_BUTTON_27] = "7",
-  [ID_BUTTON_28] = "8",
-  [ID_BUTTON_29] = "9",
-};
-
-static const uint8_t radioMap[2] =
+static const uint8_t radioMap[] =
 {
   [0] = TORQUE_CONTROL,
   [1] = SPEED_CONTROL,
+  [2] = PWM_CONTROL,
 };
 
 static WM_HWIN editHandles[editFieldsNum];
@@ -285,24 +248,54 @@ static void _controlWindowCallback(WM_MESSAGE * pMsg)
       WM_DisableWindow(hStopButton);
 
       hRadio = WM_GetDialogItem(pMsg->hWin, GUI_ID_RADIO0);
-      RADIO_SetText(hRadio, "Sterowanie momentem", 0);
-      RADIO_SetText(hRadio, "Sterowanie predkoscia", 1);
+      RADIO_SetText(hRadio, "Regulacja pradu", 0);
+      RADIO_SetText(hRadio, "Regulacja predkosci", 1);
+      RADIO_SetText(hRadio, "PWM", 2);
 
-      hDropDown = WM_GetDialogItem(pMsg->hWin, ID_DROPDOWN_0);
-      DROPDOWN_SetFont(hDropDown, GUI_FONT_24_1);
-      DROPDOWN_SetListHeight(hDropDown, 180); // dlugosc listy
-      DROPDOWN_AddString(hDropDown, "500");
-      DROPDOWN_AddString(hDropDown, "1000");
-      DROPDOWN_AddString(hDropDown, "1500");
-      DROPDOWN_AddString(hDropDown, "2000");
-      DROPDOWN_AddString(hDropDown, "2500");
-      DROPDOWN_AddString(hDropDown, "3000");
-      DROPDOWN_AddString(hDropDown, "3500");
-      DROPDOWN_AddString(hDropDown, "4000");
-      DROPDOWN_AddString(hDropDown, "4500");
-      DROPDOWN_AddString(hDropDown, "5000");
-      DROPDOWN_SetAutoScroll(hDropDown, 1);
-      DROPDOWN_SetScrollbarWidth(hDropDown, 30); // szerokosc scrollbara
+      hDropDownFreq = WM_GetDialogItem(pMsg->hWin, ID_DROPDOWN_FREQ);
+      DROPDOWN_SetFont(hDropDownFreq, GUI_FONT_24_1);
+      DROPDOWN_SetListHeight(hDropDownFreq, 135); // dlugosc listy
+      DROPDOWN_AddString(hDropDownFreq, "500");
+      DROPDOWN_AddString(hDropDownFreq, "1000");
+      DROPDOWN_AddString(hDropDownFreq, "1500");
+      DROPDOWN_AddString(hDropDownFreq, "2000");
+      DROPDOWN_AddString(hDropDownFreq, "2500");
+      DROPDOWN_AddString(hDropDownFreq, "3000");
+      DROPDOWN_AddString(hDropDownFreq, "3500");
+      DROPDOWN_AddString(hDropDownFreq, "4000");
+      DROPDOWN_AddString(hDropDownFreq, "4500");
+      DROPDOWN_AddString(hDropDownFreq, "5000");
+      DROPDOWN_AddString(hDropDownFreq, "5500");
+      DROPDOWN_AddString(hDropDownFreq, "6000");
+      DROPDOWN_AddString(hDropDownFreq, "6500");
+      DROPDOWN_AddString(hDropDownFreq, "7000");
+      DROPDOWN_AddString(hDropDownFreq, "7500");
+      DROPDOWN_AddString(hDropDownFreq, "8000");
+      DROPDOWN_AddString(hDropDownFreq, "8500");
+      DROPDOWN_AddString(hDropDownFreq, "9000");
+      DROPDOWN_AddString(hDropDownFreq, "9500");
+      DROPDOWN_AddString(hDropDownFreq, "10000");
+      DROPDOWN_SetAutoScroll(hDropDownFreq, 1);
+      DROPDOWN_SetScrollbarWidth(hDropDownFreq, 30); // szerokosc scrollbara
+      DROPDOWN_SetSel(hDropDownFreq, 9); // 50 % PWM domyslnie
+
+      hDropDownDutyCycle = WM_GetDialogItem(pMsg->hWin, ID_DROPDOWN_DUTY_CYCLE);
+      DROPDOWN_SetFont(hDropDownDutyCycle, GUI_FONT_24_1);
+      DROPDOWN_SetListHeight(hDropDownDutyCycle, 135); // dlugosc listy
+      DROPDOWN_AddString(hDropDownDutyCycle, "10");
+      DROPDOWN_AddString(hDropDownDutyCycle, "20");
+      DROPDOWN_AddString(hDropDownDutyCycle, "30");
+      DROPDOWN_AddString(hDropDownDutyCycle, "40");
+      DROPDOWN_AddString(hDropDownDutyCycle, "50");
+      DROPDOWN_AddString(hDropDownDutyCycle, "60");
+      DROPDOWN_AddString(hDropDownDutyCycle, "70");
+      DROPDOWN_AddString(hDropDownDutyCycle, "80");
+      DROPDOWN_AddString(hDropDownDutyCycle, "90");
+      DROPDOWN_AddString(hDropDownDutyCycle, "100");
+      DROPDOWN_SetAutoScroll(hDropDownDutyCycle, 1);
+      DROPDOWN_SetScrollbarWidth(hDropDownDutyCycle, 30); // szerokosc scrollbara
+      DROPDOWN_SetSel(hDropDownDutyCycle, 4); // 50 % PWM domyslnie
+      WM_DisableWindow(hDropDownDutyCycle);
       break;
 
     case WM_NOTIFY_PARENT:
@@ -334,6 +327,11 @@ static void _controlWindowCallback(WM_MESSAGE * pMsg)
             case WM_NOTIFICATION_VALUE_CHANGED:
               hRadio = WM_GetDialogItem(pMsg->hWin, GUI_ID_RADIO0);
               radioButtonSelectIndex = RADIO_GetValue(hRadio);
+
+              if (radioMap[radioButtonSelectIndex] == PWM_CONTROL)
+                WM_EnableWindow(hDropDownDutyCycle);
+              else
+                WM_DisableWindow(hDropDownDutyCycle);
               break;
             }
           break;
@@ -342,7 +340,7 @@ static void _controlWindowCallback(WM_MESSAGE * pMsg)
           switch (NCode)
             {
             case WM_NOTIFICATION_CLICKED:
-              onStartClick(pMsg, hDropDown);
+              onStartClick(pMsg);
               break;
             case WM_NOTIFICATION_RELEASED:
               break;
@@ -359,7 +357,12 @@ static void _controlWindowCallback(WM_MESSAGE * pMsg)
               TEXT_SetText(editHandles[EDIT_ERROR1], "");
               enableAllPages();
               WM_EnableWindow(hRadio);
-              WM_EnableWindow(hDropDown);
+              WM_EnableWindow(hDropDownFreq);
+
+              if (radioMap[radioButtonSelectIndex] == PWM_CONTROL)
+                WM_EnableWindow(hDropDownDutyCycle);
+              else
+                WM_DisableWindow(hDropDownDutyCycle);
 
               motorObject_t *motor = getMotorObject();
               motor->state = STOP_MOTOR;
@@ -367,18 +370,6 @@ static void _controlWindowCallback(WM_MESSAGE * pMsg)
             }
             break;
             case WM_NOTIFICATION_RELEASED:
-              break;
-            }
-          break;
-
-        case ID_DROPDOWN_0: // Notifications sent by 'Dropdown'
-          switch (NCode)
-            {
-            case WM_NOTIFICATION_CLICKED:
-              break;
-            case WM_NOTIFICATION_RELEASED:
-              break;
-            case WM_NOTIFICATION_SEL_CHANGED:
               break;
             }
           break;
@@ -496,6 +487,7 @@ static void _speedRegWindowCallback(WM_MESSAGE * pMsg)
       editHandles[EDIT_KI_SPEED] = WM_GetDialogItem(pMsg->hWin, ID_EDIT_KI_SPEED);
       editHandles[EDIT_KD_SPEED] = WM_GetDialogItem(pMsg->hWin, ID_EDIT_KD_SPEED);
       editHandles[EDIT_SPEED_REF] = WM_GetDialogItem(pMsg->hWin, ID_SPEED_REF_EDIT);
+      editHandles[EDIT_CURRENT_LIMIT] = WM_GetDialogItem(pMsg->hWin, ID_EDIT_CURRENT_LIMIT);
       break;
 
     case WM_NOTIFY_PARENT:
@@ -538,6 +530,7 @@ static void _speedRegWindowCallback(WM_MESSAGE * pMsg)
               EDIT_SetText(editHandles[EDIT_KI_SPEED], currentlyEditedField);
               EDIT_SetText(editHandles[EDIT_KD_SPEED], currentlyEditedField);
               EDIT_SetText(editHandles[EDIT_SPEED_REF], currentlyEditedField);
+              EDIT_SetText(editHandles[EDIT_CURRENT_LIMIT], currentlyEditedField);
             }
           break;
 
@@ -575,6 +568,11 @@ static void _speedRegWindowCallback(WM_MESSAGE * pMsg)
           if (NCode == WM_NOTIFICATION_CLICKED)
             activeEditField = EDIT_SPEED_REF;
           break;
+
+        case ID_EDIT_CURRENT_LIMIT:
+          if (NCode == WM_NOTIFICATION_CLICKED)
+            activeEditField = EDIT_CURRENT_LIMIT;
+          break;
         }
       break;
     default:
@@ -583,103 +581,14 @@ static void _speedRegWindowCallback(WM_MESSAGE * pMsg)
     }
 }
 
-
-static void _limitsWindowCallback(WM_MESSAGE * pMsg)
+static void setInitialValues(void)
 {
-  int NCode;
-  int Id;
-
-  switch (pMsg->MsgId)
-    {
-    case WM_INIT_DIALOG:
-      editHandles[EDIT_CURRENT_LIMIT] = WM_GetDialogItem(pMsg->hWin, ID_EDIT_CURRENT_LIMIT);
-      editHandles[EDIT_SPEED_LIMIT] = WM_GetDialogItem(pMsg->hWin, ID_EDIT_SPEED_LIMIT);
-      break;
-
-    case WM_NOTIFY_PARENT:
-      Id    = WM_GetId(pMsg->hWinSrc);
-      NCode = pMsg->Data.v;
-      switch (Id)
-        {
-        case ID_MULTIPAGE_0: // Notifications sent by 'Multipage'
-          switch (NCode)
-            {
-            case WM_NOTIFICATION_CLICKED:
-              break;
-            case WM_NOTIFICATION_RELEASED:
-              break;
-            case WM_NOTIFICATION_MOVED_OUT:
-              break;
-            case WM_NOTIFICATION_VALUE_CHANGED:
-              break;
-            }
-          break;
-        case ID_BUTTON_20 ... ID_BUTTON_29:
-          switch (NCode)
-            {
-            case WM_NOTIFICATION_CLICKED:
-              EDIT_GetText(editHandles[activeEditField], currentlyEditedField, 10);
-              if (strlen(currentlyEditedField) < MAX_EDIT_FIELD_LENGTH)
-                {
-                  strcat(currentlyEditedField, buttonsParam[Id]);
-                  EDIT_SetText(editHandles[activeEditField], currentlyEditedField);
-                }
-              break;
-            }
-          break;
-
-        case ID_BUTTON_BACKSPACE_PARAM:
-          if (NCode == WM_NOTIFICATION_CLICKED)
-            {
-              EDIT_GetText(editHandles[activeEditField], currentlyEditedField, 10);
-              uint8_t length = strlen(currentlyEditedField);
-              if (length < 1)
-                break;
-              currentlyEditedField[length - 1] = '\0';
-              EDIT_SetText(editHandles[activeEditField], currentlyEditedField);
-            }
-          break;
-
-        case ID_CLEAR_ALL_PARAM:
-          if (NCode == WM_NOTIFICATION_CLICKED)
-            {
-              memset(currentlyEditedField, 0, sizeof(currentlyEditedField));
-              EDIT_SetText(editHandles[EDIT_CURRENT_LIMIT], currentlyEditedField);
-              EDIT_SetText(editHandles[EDIT_SPEED_LIMIT], currentlyEditedField);
-            }
-          break;
-
-        case ID_BUTTON_DOT_PARAM:
-          if (NCode == WM_NOTIFICATION_CLICKED)
-            {
-              if (activeEditField == EDIT_SPEED_LIMIT)
-                break;
-
-              EDIT_GetText(editHandles[activeEditField], currentlyEditedField, 10);
-              if (strlen(currentlyEditedField) < MAX_EDIT_FIELD_LENGTH)
-                {
-                  strcat(currentlyEditedField, ".");
-                  EDIT_SetText(editHandles[activeEditField], currentlyEditedField);
-                }
-            }
-          break;
-
-        case ID_EDIT_CURRENT_LIMIT:
-          if (NCode == WM_NOTIFICATION_CLICKED)
-            activeEditField = EDIT_CURRENT_LIMIT;
-          break;
-
-        case ID_EDIT_SPEED_LIMIT:
-          if (NCode == WM_NOTIFICATION_CLICKED)
-            activeEditField = EDIT_SPEED_LIMIT;
-          break;
-
-        }
-      break;
-    default:
-      WM_DefaultProc(pMsg);
-      break;
-    }
+  EDIT_SetText(editHandles[EDIT_KP_CURRENT], "0.5");
+  EDIT_SetText(editHandles[EDIT_KI_CURRENT], "3");
+  EDIT_SetText(editHandles[EDIT_KP_SPEED], "5");
+  EDIT_SetText(editHandles[EDIT_KI_SPEED], "0.4");
+  EDIT_SetText(editHandles[EDIT_KD_SPEED], "0.0001");
+  EDIT_SetText(editHandles[EDIT_CURRENT_LIMIT], "15");
 }
 
 WM_HWIN WindowInit(void);
@@ -701,53 +610,66 @@ WM_HWIN WindowInit(void)
   MULTIPAGE_AddPage(hMultiPage, hDialogCurrentReg, "Reg. pradu");
   hDialogSpeedReg = GUI_CreateDialogBox(_aDialogCreate_SpeedReg, GUI_COUNTOF(_aDialogCreate_SpeedReg), _speedRegWindowCallback, WM_UNATTACHED, 0, 0);
   MULTIPAGE_AddPage(hMultiPage, hDialogSpeedReg, "Reg. predkosci");
-  hDialogParams = GUI_CreateDialogBox(_aDialogCreate_Limits, GUI_COUNTOF(_aDialogCreate_Limits), _limitsWindowCallback, WM_UNATTACHED, 0, 0);
-  MULTIPAGE_AddPage(hMultiPage, hDialogParams, "War. graniczne");
+
+  MULTIPAGE_SelectPage(hMultiPage, 0);
+  setInitialValues();
 
   return hWin;
 }
 
-static void startMotorFromGUI(WM_MESSAGE *pMsg, WM_HWIN hDropDown)
+static void startMotorFromGUI(WM_MESSAGE *pMsg)
 {
   motorObject_t *motor = getMotorObject();
-
-  float temp = 0;
   char buff[10] = {0};
+
+  /* Regulator pradu */
   EDIT_GetText(editHandles[EDIT_KP_CURRENT], currentlyEditedField, 10);
-  temp = atof(currentlyEditedField);
-  motor->currentPID.kp = temp;
+  motor->currentPID.kp = atof(currentlyEditedField);
 
   EDIT_GetText(editHandles[EDIT_KI_CURRENT], currentlyEditedField, 10);
-  temp = atof(currentlyEditedField);
-  motor->currentPID.ki = temp;
+  motor->currentPID.ki = atof(currentlyEditedField);
 
   EDIT_GetText(editHandles[EDIT_CURRENT_REF], currentlyEditedField, 10);
-  temp = atof(currentlyEditedField);
-  motor->currentPID.ref = temp;
+  motor->currentPID.ref = atof(currentlyEditedField);
 
+  /* Regulator predkosci */
+  EDIT_GetText(editHandles[EDIT_KP_SPEED], currentlyEditedField, 10);
+  motor->speedPID.kp = atof(currentlyEditedField);
+
+  EDIT_GetText(editHandles[EDIT_KI_SPEED], currentlyEditedField, 10);
+  motor->speedPID.ki = atof(currentlyEditedField);
+
+  EDIT_GetText(editHandles[EDIT_KD_SPEED], currentlyEditedField, 10);
+  motor->speedPID.kd = atof(currentlyEditedField);
+
+  EDIT_GetText(editHandles[EDIT_SPEED_REF], currentlyEditedField, 10);
+  motor->speedPID.ref = atof(currentlyEditedField);
+
+  /* Ograniczenie pradu */
   EDIT_GetText(editHandles[EDIT_CURRENT_LIMIT], currentlyEditedField, 10);
-  temp = atof(currentlyEditedField);
-  motor->currentLimit = temp;
+  motor->currentLimit = atof(currentlyEditedField);
 
-  EDIT_GetText(editHandles[EDIT_SPEED_LIMIT], currentlyEditedField, 10);
-  temp = atof(currentlyEditedField);
-  motor->speedLimit = temp;
-
-  hDropDown = WM_GetDialogItem(pMsg->hWin, ID_DROPDOWN_0);
+  WM_HWIN hDropDown = WM_GetDialogItem(pMsg->hWin, ID_DROPDOWN_FREQ);
   int sel = DROPDOWN_GetSel(hDropDown);
   DROPDOWN_GetItemText(hDropDown, sel, buff, sizeof(buff));
   motor->frequency = atoi(buff);
+
+  hDropDown = WM_GetDialogItem(pMsg->hWin, ID_DROPDOWN_DUTY_CYCLE);
+  sel = DROPDOWN_GetSel(hDropDown);
+  DROPDOWN_GetItemText(hDropDown, sel, buff, sizeof(buff));
+  motor->dutyCycle = atof(buff);
+  motor->dutyCycle /= 100;
 
   motor->state = radioMap[radioButtonSelectIndex];
   updateMotorState();
 }
 
-#define COEFF_MIN 0.001
-#define COEFF_MAX 10.000
+#define COEFF_MIN 0.0001
+#define COEFF_MAX 100.000
 #define CURRENT_MIN 1
-#define CURRENT_MAX 1000
+#define CURRENT_MAX 100
 #define SPEED_MIN 1
-#define SPEED_MAX 10000
+#define SPEED_MAX 3000
 static bool checkField(editField_t field, float min, float max)
 {
   float temp;
@@ -762,7 +684,7 @@ static bool checkField(editField_t field, float min, float max)
     return false;
 }
 
-const char wrongValue[] = "Nieprawidlowa wartosc";
+static const char wrongValue[] = "Nieprawidlowa wartosc";
 #define ERROR_MESSAGE(str) strcpy(error, str)
 #define IS_FIELD_VALID(field, min, max, msg) \
 {  if (!checkField(field, min, max)){ \
@@ -775,21 +697,21 @@ static bool isMotorStartPossible(char *error)
     {
     case TORQUE_CONTROL:
       IS_FIELD_VALID(EDIT_KP_CURRENT, COEFF_MIN, COEFF_MAX, "nastawy Kp regulatora pradu.");
-      IS_FIELD_VALID(EDIT_KI_CURRENT, COEFF_MIN, COEFF_MAX, "nastawy Ki regulatora pradu.");
+      IS_FIELD_VALID(EDIT_KI_CURRENT, COEFF_MIN, COEFF_MAX, "nastawy Ti regulatora pradu.");
       IS_FIELD_VALID(EDIT_CURRENT_REF, CURRENT_MIN, CURRENT_MAX, "pradu zadanego.");
-      IS_FIELD_VALID(EDIT_CURRENT_LIMIT, CURRENT_MIN, CURRENT_MAX, "ograniczenia pradu.");
-      IS_FIELD_VALID(EDIT_SPEED_LIMIT, SPEED_MIN, SPEED_MAX, "ograniczenia predkosci.");
       break;
 
     case SPEED_CONTROL:
       IS_FIELD_VALID(EDIT_KP_CURRENT, COEFF_MIN, COEFF_MAX, "nastawy Kp regulatora pradu.");
-      IS_FIELD_VALID(EDIT_KI_CURRENT, COEFF_MIN, COEFF_MAX, "nastawy Ki regulatora pradu.");
+      IS_FIELD_VALID(EDIT_KI_CURRENT, COEFF_MIN, COEFF_MAX, "nastawy Ti regulatora pradu.");
       IS_FIELD_VALID(EDIT_KP_SPEED, COEFF_MIN, COEFF_MAX, "nastawy Kp regulatora predkosci.");
-      IS_FIELD_VALID(EDIT_KI_SPEED, COEFF_MIN, COEFF_MAX, "nastawy Ki regulatora predkosci.");
-      IS_FIELD_VALID(EDIT_KD_SPEED, COEFF_MIN, COEFF_MAX, "nastawy Kd regulatora predkosci.");
+      IS_FIELD_VALID(EDIT_KI_SPEED, COEFF_MIN, COEFF_MAX, "nastawy Ti regulatora predkosci.");
+      IS_FIELD_VALID(EDIT_KD_SPEED, COEFF_MIN, COEFF_MAX, "nastawy Td regulatora predkosci.");
       IS_FIELD_VALID(EDIT_SPEED_REF, SPEED_MIN, SPEED_MAX, "predkosci zadanej.");
       IS_FIELD_VALID(EDIT_CURRENT_LIMIT, CURRENT_MIN, CURRENT_MAX, "ograniczenia pradu.");
-      IS_FIELD_VALID(EDIT_SPEED_LIMIT, SPEED_MIN, SPEED_MAX, "ograniczenia predkosci.");
+      break;
+
+    case PWM_CONTROL:
       break;
 
     default:
@@ -813,7 +735,7 @@ static inline void enableAllPages(void)
     MULTIPAGE_EnablePage(hMultiPage, i);
 }
 
-static void onStartClick(WM_MESSAGE *pMsg, WM_HWIN hDropDown)
+static void onStartClick(WM_MESSAGE *pMsg)
 {
   bool startPossible = false;
   char errorMessage[50] = {0};
@@ -832,8 +754,9 @@ static void onStartClick(WM_MESSAGE *pMsg, WM_HWIN hDropDown)
       /*Disable all controls - only STOP is active */
       disableAllPages();
       WM_DisableWindow(hRadio);
-      WM_DisableWindow(hDropDown);
-      startMotorFromGUI(pMsg, hDropDown);
+      WM_DisableWindow(hDropDownFreq);
+      WM_DisableWindow(hDropDownDutyCycle);
+      startMotorFromGUI(pMsg);
     }
   else
     {
@@ -849,23 +772,40 @@ static void onStartClick(WM_MESSAGE *pMsg, WM_HWIN hDropDown)
 void refreshMotorCurrentOnGUI(void)
 {
   static float motorCurrent = 0;
+  static speedType_t motorSpeed = 0;
   static char currentStr[6];
+  static char speedStr[6];
   static WM_HWIN hDlg, hText;
 
   motorObject_t *motor = getMotorObject();
   if (motor->state == STOP_MOTOR)
-    motorCurrent = 0;
+    {
+      motorCurrent = 0;
+      motorSpeed = 0;
+    }
   else
     {
       motorCurrent = getMotorAverageCurrent();
+      motorSpeed = getMotorSpeed();
     }
+
+  floatToString(motorCurrent, currentStr); // float to str
+  xsprintf(speedStr, "%d", motorSpeed); // int to str
 
   if (WM_IsVisible(hDialogControl))
     {
-      floatToString(motorCurrent, currentStr);
-
       hDlg = WM_GetClientWindow(hDialogControl);
       hText = WM_GetDialogItem(hDlg, ID_CURRENT_MEAS);
       TEXT_SetText(hText, currentStr);
+
+      hText = WM_GetDialogItem(hDlg, ID_SPEED_MEAS);
+      TEXT_SetText(hText, speedStr);
     }
+
+  char data[20];
+  xsprintf(data, "$%s$", currentStr);
+  xprintf("%s", data);
+
+  xsprintf(data, "^%d^", motorSpeed);
+  xprintf("%s", data);
 }

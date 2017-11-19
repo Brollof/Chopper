@@ -417,6 +417,10 @@ in voltage and temperature.*/
 #include "stm32f4xx_hal_spdifrx.h"
 #endif /* HAL_SPDIFRX_MODULE_ENABLED */
 
+#ifdef HAL_DFSDM_MODULE_ENABLED
+#include "stm32f4xx_hal_dfsdm.h"
+#endif /* HAL_DFSDM_MODULE_ENABLED */
+
 #ifdef HAL_LPTIM_MODULE_ENABLED
 #include "stm32f4xx_hal_lptim.h"
 #endif /* HAL_LPTIM_MODULE_ENABLED */

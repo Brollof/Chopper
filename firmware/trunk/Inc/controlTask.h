@@ -13,21 +13,6 @@ typedef enum
 
 typedef struct
 {
-  float Kp_i;
-  float Ki_i;
-  float Kp_omega;
-  float Ki_omega;
-  float Kd_omega;
-  currentType_t iRef;
-  currentType_t currentLimit;
-  speedType_t speedLimit;
-  speedType_t omegaRef;
-  uint16_t freqRef;
-  controlType_t type;
-} controlData_t;
-
-typedef struct
-{
   float kp;
   float ki;
   float kd;
@@ -41,8 +26,8 @@ typedef struct
   currentType_t current;
   currentType_t currentLimit;
   speedType_t speed;
-  speedType_t speedLimit;
   uint16_t frequency;
+  float dutyCycle;
   controlType_t state;
   void(*start)(void);
   void(*stop)(void);
@@ -57,5 +42,6 @@ void motorCheck(void);
 motorObject_t *getMotorObject(void);
 void updateMotorState(void);
 float getMotorAverageCurrent(void);
+speedType_t getMotorSpeed(void);
 
 #endif

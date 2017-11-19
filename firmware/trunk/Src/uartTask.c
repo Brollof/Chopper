@@ -9,6 +9,7 @@
 
 extern UART_HandleTypeDef huart1;
 static void setMotorData(uint8_t paraNum, char *parameter);
+static void sendAck(void);
 
 typedef enum
 {
@@ -57,6 +58,16 @@ char *fts(float f1)
   float f2 = f1 - d1;
   int d2 = (int)(f2 * 100);
   xsprintf (str, "%d.%02d", d1, d2);
+  return str;
+}
+
+char *fts04(float f1)
+{
+  static char str[10];
+  int d1 = f1;
+  float f2 = f1 - d1;
+  int d2 = (int)(f2 * 10000);
+  xsprintf (str, "%d.%04d", d1, d2);
   return str;
 }
 
@@ -129,7 +140,7 @@ static void setMotorData(uint8_t paraNum, char *parameter)
       break;
 
     case 10:
-      motor->speedLimit = atoi(parameter);
+      motor->dutyCycle = atof(parameter);
       break;
 
     default:
@@ -137,9 +148,9 @@ static void setMotorData(uint8_t paraNum, char *parameter)
     }
 }
 
-void sendAck(void)
+static void sendAck(void)
 {
-  xprintf("ack");
+  xprintf("&");
 }
 
 static void prepareCommandData(cmdType_t cmd, char *parameter, uint8_t *paraNum)

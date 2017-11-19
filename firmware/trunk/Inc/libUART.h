@@ -13,5 +13,6 @@ typedef struct
 void uartInit(void);
 void printRxBuff(void);
 uartBuffer_t *getUartRxData(void);
+void sendConsole(char data);
 
 #endif
